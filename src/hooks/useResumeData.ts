@@ -9,10 +9,10 @@ import { saveResume } from '../lib/supabase';
 const defaultCustomization: ResumeCustomization = {
   fontFamily: 'Inter',
   fontSize: {
-    name: 32,
-    heading: 20,
-    body: 14,
-    small: 12
+    name: 24,
+    heading: 14,
+    body: 11,
+    small: 9
   },
   fontWeight: {
     name: 700,
@@ -20,8 +20,8 @@ const defaultCustomization: ResumeCustomization = {
     body: 400
   },
   lineHeight: {
-    heading: 1.2,
-    body: 1.5
+    heading: 1.0,
+    body: 1.2
   },
   colors: {
     primary: '#000000',
@@ -33,10 +33,10 @@ const defaultCustomization: ResumeCustomization = {
     border: '#E5E7EB'
   },
   spacing: {
-    page: 32,
-    section: 24,
-    item: 16,
-    line: 8
+    page: 20,
+    section: 12,
+    item: 8,
+    line: 4
   },
   layout: {
     pageWidth: 8.27,
@@ -45,7 +45,7 @@ const defaultCustomization: ResumeCustomization = {
     headerAlignment: 'center',
     contentAlignment: 'left',
     sectionHeadingAlignment: 'left',
-    sectionSpacing: 32,
+    sectionSpacing: 16,
     pageFormat: 'A4',
     orientation: 'portrait',
     maxPages: 3,
@@ -57,10 +57,10 @@ const defaultCustomization: ResumeCustomization = {
   },
   borders: {
     sectionBorder: true,
-    sectionBorderWidth: 2,
+    sectionBorderWidth: 1,
     sectionBorderStyle: 'solid',
     headerBorder: true,
-    headerBorderWidth: 2,
+    headerBorderWidth: 1,
     pageBorder: false,
     pageBorderWidth: 1,
     pageBorderColor: '#E5E7EB'
@@ -155,7 +155,7 @@ export const useResumeData = () => {
   const [selectedTemplate, setSelectedTemplate] = useState('default');
   const [customization, setCustomization] = useState<ResumeCustomization>(defaultCustomization);
   
-  // Initialize with default sections
+  // Initialize with default sections - using custom sections for content
   const getDefaultSectionOrder = (): SectionOrder[] => [
     { id: 'personal', title: 'Personal Information', component: 'personal', visible: true, icon: User },
     { id: 'experience', title: 'Work Experience', component: 'experience', visible: true, icon: Briefcase },
@@ -345,27 +345,15 @@ export const useResumeData = () => {
     });
   }, [resumeData.customSections]);
 
-  // Auto-update section visibility based on content
+  // Auto-update section visibility based on content - simplified since using custom sections
   useEffect(() => {
     setSectionOrder(prevOrder => 
       prevOrder.map(section => {
-        switch (section.id) {
-          case 'skills':
-            return { ...section, visible: resumeData.skills.length > 0 ? true : section.visible };
-          case 'projects':
-            return { ...section, visible: resumeData.projects.length > 0 ? true : section.visible };
-          case 'certifications':
-            return { ...section, visible: resumeData.certifications.length > 0 ? true : section.visible };
-          case 'achievements':
-            return { ...section, visible: resumeData.achievements.length > 0 ? true : section.visible };
-          case 'professional-summary':
-            return { ...section, visible: resumeData.personalInfo.summary ? true : section.visible };
-          default:
-            return section;
-        }
+        // Keep all sections visible since content is now in custom sections
+        return section;
       })
     );
-  }, [resumeData.skills, resumeData.projects, resumeData.certifications, resumeData.achievements, resumeData.personalInfo.summary]);
+  }, [resumeData.customSections]);
 
   // CRITICAL FIX: Load resume with complete section order restoration
   const loadResumeForEditing = (resume: any) => {
@@ -567,6 +555,26 @@ export const useResumeData = () => {
           accent: '#666666',
           text: '#000000',
           textLight: '#444444'
+        },
+        borders: {
+          ...prev.borders,
+          sectionBorder: true,
+          sectionBorderWidth: 1,
+          sectionBorderStyle: 'solid'
+        }
+      }));
+    } else if (selectedTemplate === 'nit-premium') {
+      // NIT template uses clean, professional styling
+      setCustomization(prev => ({
+        ...prev,
+        fontFamily: 'Inter, sans-serif',
+        colors: {
+          ...prev.colors,
+          primary: '#000000',
+          secondary: '#333333',
+          accent: '#666666',
+          text: '#000000',
+          textLight: '#555555'
         },
         borders: {
           ...prev.borders,

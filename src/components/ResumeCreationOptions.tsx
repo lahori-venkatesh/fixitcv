@@ -22,6 +22,7 @@ interface ResumeCreationOptionsProps {
   onCreateFromScratch: () => void;
   onUploadResume: (extractedData: any) => void;
   onSelectTemplate: () => void;
+  onSelectPremiumTemplate?: () => void;
   isDarkMode?: boolean;
 }
 
@@ -29,6 +30,7 @@ const ResumeCreationOptions: React.FC<ResumeCreationOptionsProps> = ({
   onCreateFromScratch,
   onUploadResume,
   onSelectTemplate,
+  onSelectPremiumTemplate,
   isDarkMode = false
 }) => {
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'processing' | 'success' | 'error'>('idle');
@@ -223,6 +225,16 @@ const ResumeCreationOptions: React.FC<ResumeCreationOptionsProps> = ({
       features: ['AI content extraction', 'Auto-formatting', 'Section restructuring', 'Easy editing'],
       action: () => fileInputRef.current?.click(),
       recommended: false
+    },
+    {
+      id: 'premium',
+      title: 'Premium Templates',
+      description: 'Access exclusive premium templates with advanced customization',
+      icon: Sparkles,
+      color: 'from-yellow-500 to-orange-600',
+      features: ['Exclusive designs', 'Advanced customization', 'Priority support', 'Premium features'],
+      action: onSelectPremiumTemplate || (() => console.log('Premium templates not available')),
+      recommended: false
     }
   ];
 
@@ -286,7 +298,7 @@ const ResumeCreationOptions: React.FC<ResumeCreationOptionsProps> = ({
         </motion.div>
 
         {/* Creation Options */}
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {creationOptions.map((option, index) => {
             const Icon = option.icon;
             return (
@@ -356,7 +368,7 @@ const ResumeCreationOptions: React.FC<ResumeCreationOptionsProps> = ({
                   <span className={`font-medium ${
                     isDarkMode ? 'text-white' : 'text-gray-900'
                   }`}>
-                    {option.id === 'upload' ? 'Choose File' : option.id === 'template' ? 'Browse Templates' : 'Get Started'}
+                    {option.id === 'upload' ? 'Choose File' : option.id === 'template' ? 'Browse Templates' : option.id === 'premium' ? 'View Premium' : 'Get Started'}
                   </span>
                   <ArrowRight className={`w-5 h-5 group-hover:translate-x-1 transition-transform duration-200 ${
                     isDarkMode ? 'text-gray-400' : 'text-gray-500'

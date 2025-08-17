@@ -227,6 +227,20 @@ const Sidebar: React.FC<SidebarProps> = ({
       category: 'main'
     },
     { 
+      id: 'premium-templates', 
+      label: 'Premium Templates', 
+      icon: Crown, 
+      description: 'IIT, NIT, IIM & IISc templates',
+      category: 'premium'
+    },
+    { 
+      id: 'ats-score', 
+      label: 'ATS Score', 
+      icon: Star, 
+      description: 'Real-time optimization',
+      category: 'premium'
+    },
+    { 
       id: 'customize', 
       label: 'Customize', 
       icon: Sliders, 
@@ -312,7 +326,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               Main
             </h3>
             <div className="space-y-1">
-              {staticSections.map((section) => {
+              {staticSections.filter(s => s.category === 'main').map((section) => {
                 const Icon = section.icon;
                 const isActive = activeSection === section.id;
                 
@@ -342,6 +356,69 @@ const Sidebar: React.FC<SidebarProps> = ({
                         {section.label}
                       </div>
                       <div className={`text-xs ${isActive ? 'text-blue-100' : isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}>
+                        {section.description}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Premium Sections */}
+          <div>
+            <h3 className={`text-xs font-semibold uppercase tracking-wider mb-3 px-2 ${
+              isDarkMode ? 'text-slate-500' : 'text-gray-500'
+            }`}>
+              Premium Features
+            </h3>
+            <div className="space-y-1">
+              {staticSections.filter(s => s.category === 'premium').map((section) => {
+                const Icon = section.icon;
+                const isActive = activeSection === section.id;
+                
+                return (
+                  <button
+                    key={section.id}
+                    onClick={() => onSectionChange(section.id)}
+                    className={`w-full group flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 relative overflow-hidden ${
+                      isActive
+                        ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg transform scale-105'
+                        : isDarkMode
+                          ? 'text-slate-300 hover:bg-gradient-to-r hover:from-purple-900/20 hover:to-purple-800/20 hover:scale-102'
+                          : 'text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-purple-100 hover:scale-102'
+                    }`}
+                  >
+                    {/* Premium Gradient Background */}
+                    <div className={`absolute inset-0 bg-gradient-to-r from-purple-600/10 to-purple-700/10 opacity-0 group-hover:opacity-100 transition-opacity ${
+                      isActive ? 'opacity-100' : ''
+                    }`} />
+                    
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors relative z-10 ${
+                      isActive 
+                        ? 'bg-white/20' 
+                        : isDarkMode
+                          ? 'bg-purple-900/30 group-hover:bg-purple-800/40'
+                          : 'bg-purple-100 group-hover:bg-purple-200'
+                    }`}>
+                      <Icon className={`w-4 h-4 ${
+                        isActive 
+                          ? 'text-white' 
+                          : isDarkMode 
+                            ? 'text-purple-400' 
+                            : 'text-purple-600'
+                      }`} />
+                    </div>
+                    <div className="flex-1 min-w-0 relative z-10">
+                      <div className={`font-medium text-sm flex items-center space-x-2 ${
+                        isActive ? 'text-white' : isDarkMode ? 'text-slate-200' : 'text-gray-900'
+                      }`}>
+                        <span>{section.label}</span>
+                        <Crown className="w-3 h-3 text-yellow-500" />
+                      </div>
+                      <div className={`text-xs ${
+                        isActive ? 'text-purple-100' : isDarkMode ? 'text-slate-400' : 'text-gray-500'
+                      }`}>
                         {section.description}
                       </div>
                     </div>

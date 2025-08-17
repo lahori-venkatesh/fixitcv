@@ -23,6 +23,7 @@ import {
   Github,
   Instagram,
   Facebook,
+  Crown,
 } from 'lucide-react';
 import Header from './Header';
 import HeroSection from './ui/HeroSection';
@@ -65,24 +66,24 @@ const LandingPage: React.FC<LandingPageProps> = ({
 
   const features = [
     {
-      icon: Zap,
-      title: "AI-Powered Builder",
-      description: "Intelligent suggestions and content optimization powered by advanced AI algorithms",
+      icon: Crown,
+      title: "Premium Institution Templates",
+      description: "Exclusive resume templates from IIT, NIT, IIM, and IISc students who landed top jobs",
     },
     {
       icon: Shield,
-      title: "ATS Optimization",
-      description: "Guaranteed to pass Applicant Tracking Systems with industry-leading compatibility",
-    },
-    {
-      icon: Globe,
-      title: "Global Templates",
-      description: "Professional templates designed for markets worldwide with regional preferences",
+      title: "Real-time ATS Scoring",
+      description: "Get instant feedback on your resume's ATS compatibility with detailed improvement suggestions",
     },
     {
       icon: TrendingUp,
-      title: "Career Analytics",
-      description: "Track your application success rate and get insights to improve your job search",
+      title: "Verified Success Stories",
+      description: "Templates from verified students who secured positions at FAANG, consulting, and top companies",
+    },
+    {
+      icon: Star,
+      title: "Institution Credibility",
+      description: "Build trust with recruiters using templates backed by India's most prestigious institutions",
     },
   ];
 
@@ -235,7 +236,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
               transition={{ duration: 0.6, delay: 0.1 }}
               className={`text-4xl md:text-5xl font-bold mb-6 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}
             >
-              Everything You Need to Succeed
+              Premium Templates from Top Institutions
             </motion.h2>
 
             <motion.p
@@ -245,7 +246,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
               transition={{ duration: 0.6, delay: 0.2 }}
               className={`text-xl max-w-3xl mx-auto ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}
             >
-              Professional tools and intelligent features designed to help you create resumes that get noticed by employers and pass ATS systems.
+              Access exclusive resume templates created by successful students from IIT, NIT, IIM, and IISc. Get real-time ATS scoring and professional guidance to land your dream job.
             </motion.p>
           </div>
 

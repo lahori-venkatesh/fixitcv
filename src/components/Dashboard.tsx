@@ -372,7 +372,7 @@ const Dashboard: React.FC<DashboardProps> = ({
           
           <div className="text-center">
             <motion.button
-              onClick={() => onSectionChange('templates')}
+              onClick={() => onSectionChange('blank-editor')}
               className="group relative bg-gradient-to-br from-blue-500 to-blue-600 text-white p-8 rounded-2xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl"
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
@@ -383,7 +383,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                 </div>
                 <div>
                   <h3 className="text-xl font-bold mb-2">Create New Resume</h3>
-                  <p className="text-blue-100">Start building your professional resume</p>
+                  <p className="text-blue-100">Start with a blank page or choose a template</p>
                 </div>
               </div>
             </motion.button>
@@ -496,7 +496,7 @@ const Dashboard: React.FC<DashboardProps> = ({
               <h3 className="text-lg font-medium text-gray-900 mb-2">No resumes yet</h3>
               <p className="text-gray-600 mb-6">Create your first resume to get started</p>
               <button
-                onClick={() => onSectionChange('templates')}
+                onClick={() => onSectionChange('blank-editor')}
                 className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
               >
                 Create Your First Resume

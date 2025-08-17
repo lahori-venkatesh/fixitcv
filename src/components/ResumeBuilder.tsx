@@ -15,6 +15,11 @@ import TemplateSelector from './TemplateSelector';
 import CustomizationPanel from './CustomizationPanel';
 import ResumePreview from './resume/ResumePreview';
 import ResumeCreationOptions from './ResumeCreationOptions';
+import PremiumTemplateGallery from './PremiumTemplateGallery';
+import ATSScorePanel from './ATSScorePanel';
+import DefaultBlankResume from './DefaultBlankResume';
+import TemplateAccessControl from './TemplateAccessControl';
+import DedicatedPremiumTemplates from './DedicatedPremiumTemplates';
 import { useResumeData } from '../hooks/useResumeData';
 import { exportToPuppeteer } from '../utils/exportToPuppeteer';
 import { saveResume, getUserResumes } from '../lib/supabase';
@@ -255,8 +260,8 @@ const ResumeBuilder: React.FC<ResumeBuilderProps> = ({
 
   const handleCreateFromScratch = () => {
     resetForNewResume();
-    // Go directly to personal information section
-    setActiveSection('personal');
+    // Go to default blank resume with template options
+    setActiveSection('default-blank');
   };
 
   const handleSelectTemplate = () => {
@@ -265,8 +270,7 @@ const ResumeBuilder: React.FC<ResumeBuilderProps> = ({
 
   const handleUploadResume = (extractedData: any) => {
     // Reset resume tracking state for new upload
-    setCurrentResumeId(null);
-    setIsEditingExistingResume(false);
+    resetForNewResume();
     
     // Set the extracted data to the resume state
     setResumeData(extractedData);
@@ -328,7 +332,19 @@ const ResumeBuilder: React.FC<ResumeBuilderProps> = ({
             onCreateFromScratch={handleCreateFromScratch}
             onSelectTemplate={handleSelectTemplate}
             onUploadResume={handleUploadResume}
+            onSelectPremiumTemplate={() => setActiveSection('premium-templates')}
             isDarkMode={isDarkMode}
+          />
+        );
+      case 'default-blank':
+        return (
+          <DefaultBlankResume
+            isDarkMode={isDarkMode}
+            onTemplateSelect={(template) => {
+              setSelectedTemplate(template.id);
+              setActiveSection('personal');
+            }}
+            onContinueWithDefault={() => setActiveSection('personal')}
           />
         );
       case 'dashboard':
@@ -429,6 +445,35 @@ const ResumeBuilder: React.FC<ResumeBuilderProps> = ({
             />
           </div>
         );
+      case 'premium-templates':
+        return (
+          <DedicatedPremiumTemplates
+            isDarkMode={isDarkMode}
+            onUpgrade={() => setActiveSection('pricing')}
+            onBackToBuilder={() => setActiveSection('creation-options')}
+            onTemplateSelect={(template) => {
+              setSelectedTemplate(template.id);
+              setActiveSection('personal');
+            }}
+          />
+        );
+      case 'ats-score':
+        return (
+          <div className="flex justify-center items-start min-h-full py-8">
+            <ATSScorePanel
+              resumeData={resumeData}
+              isDarkMode={isDarkMode}
+              onSuggestionApply={(suggestion) => {
+                // Handle suggestion application
+                console.log('Applying suggestion:', suggestion);
+              }}
+              onAutoFix={(fixes) => {
+                // Handle auto-fix application
+                console.log('Applying auto-fixes:', fixes);
+              }}
+            />
+          </div>
+        );
       case 'profile':
       case 'professional-summary':
         // These sections use the same form as personal info
@@ -446,6 +491,7 @@ const ResumeBuilder: React.FC<ResumeBuilderProps> = ({
   const getSectionTitle = () => {
     const titles = {
       'creation-options': 'Resume Creation Options',
+      'default-blank': 'Choose Template or Start Blank',
       dashboard: 'Dashboard',
       templates: 'Resume Templates',
       customize: 'Customize Design',
@@ -456,6 +502,8 @@ const ResumeBuilder: React.FC<ResumeBuilderProps> = ({
       custom: 'Custom Sections',
       preview: 'Resume Preview',
       pricing: 'Upgrade to Pro',
+      'premium-templates': 'Premium Institution Templates',
+      'ats-score': 'ATS Compatibility Score',
       'profile': 'Profile',
       'professional-summary': 'Professional Summary'
     };
@@ -465,6 +513,7 @@ const ResumeBuilder: React.FC<ResumeBuilderProps> = ({
   const getSectionDescription = () => {
     const descriptions = {
       'creation-options': 'Choose how you want to create your resume',
+      'default-blank': 'Select a template or start with a blank resume',
       dashboard: 'Overview of your resume progress and quick actions',
       templates: 'Choose a professional template design that matches your style',
       customize: 'Personalize fonts, colors, spacing, and layout to make your resume unique',
@@ -475,6 +524,8 @@ const ResumeBuilder: React.FC<ResumeBuilderProps> = ({
       custom: 'Create custom sections to showcase unique aspects of your background',
       preview: 'See how your resume will look when exported to PDF. Use zoom controls to inspect details.',
       pricing: 'Upgrade to Pro for premium templates and advanced features',
+      'premium-templates': 'Access premium templates exclusively from IIT, NIT, IISc, and IIM institutions',
+      'ats-score': 'Get real-time ATS compatibility analysis and optimization suggestions for your resume',
       'profile': 'Add a brief professional profile',
       'professional-summary': 'Add a comprehensive professional summary'
     };
@@ -482,9 +533,9 @@ const ResumeBuilder: React.FC<ResumeBuilderProps> = ({
   };
 
   // Determine layout based on active section
-  const isFullWidthSection = activeSection === 'creation-options' || activeSection === 'dashboard' || activeSection === 'pricing';
+  const isFullWidthSection = activeSection === 'creation-options' || activeSection === 'dashboard' || activeSection === 'pricing' || activeSection === 'premium-templates';
   const showPreviewPanel = !isFullWidthSection && activeSection !== 'preview' && activeSection !== 'creation-options';
-  const showSidebar = activeSection !== 'creation-options';
+  const showSidebar = activeSection !== 'creation-options' && activeSection !== 'premium-templates';
 
   // Show loading state while Clerk is loading
   if (!isLoaded) {

@@ -217,10 +217,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   const y = useTransform(scrollY, [0, 500], [0, 150])
 
   const stats = [
-    { number: "2.5M+", label: "Resumes Created", icon: FileText },
-    { number: "96%", label: "Interview Rate", icon: TrendingUp },
+    { number: "500+", label: "Premium Templates", icon: FileText },
+    { number: "98%", label: "ATS Pass Rate", icon: TrendingUp },
     { number: "4.9/5", label: "User Rating", icon: Star },
-    { number: "180+", label: "Countries", icon: Globe },
+    { number: "50+", label: "Top Institutions", icon: Globe },
   ];
   
   return (
@@ -257,9 +257,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             isDarkMode ? 'text-white' : 'text-slate-900'
           }`}
         >
-          Build Your Perfect
-          <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent block">
-            Professional Resume
+          Premium Templates from
+          <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent block">
+            IIT • NIT • IIM • IISc
           </span>
         </motion.h1>
         
@@ -272,7 +272,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             isDarkMode ? 'text-slate-300' : 'text-slate-600'
           }`}
         >
-          Create ATS-optimized resumes with AI-powered suggestions. Land your dream job with professionally designed templates trusted by industry leaders.
+          Access exclusive resume templates created by successful students from India's top institutions. Get real-time ATS scoring and land your dream job with proven formats.
         </motion.p>
         
         {/* CTA Buttons */}

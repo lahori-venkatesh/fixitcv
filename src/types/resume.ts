@@ -138,9 +138,71 @@ export interface ResumeTemplate {
   features: string[];
   layout: 'single-column' | 'two-column' | 'minimal' | 'german-standard' | 'japanese-standard' | 'europass';
   style: 'modern' | 'traditional' | 'creative' | 'professional' | 'scholarly' | 'clinical' | 'elegant' | 'academic' | 'classic';
-  tier: 'free' | 'premium';
+  tier: 'free' | 'premium' | 'elite';
   atsScore: number;
   category: string;
+  institution?: 'IIT' | 'NIT' | 'IIM' | 'IISc' | 'Other';
+  institutionName?: string;
+  creatorProfile?: {
+    name: string;
+    batch: string;
+    branch?: string;
+    company?: string;
+    position?: string;
+    verified: boolean;
+  };
+  downloadCount: number;
+  rating: number;
+  price: number;
+  isVerified: boolean;
+  createdAt: string;
+}
+
+export interface ATSScore {
+  overall: number;
+  breakdown: {
+    formatting: number;
+    keywords: number;
+    sections: number;
+    readability: number;
+    atsCompatibility: number;
+  };
+  suggestions: ATSSuggestion[];
+  lastUpdated: string;
+  institution?: string | null;
+  industry?: string;
+}
+
+export interface ATSSuggestion {
+  id: string;
+  type: 'critical' | 'warning' | 'info';
+  category: 'formatting' | 'content' | 'keywords' | 'structure';
+  title: string;
+  description: string;
+  suggestion: string;
+  impact: 'high' | 'medium' | 'low';
+}
+
+export interface PaymentPlan {
+  id: string;
+  name: string;
+  price: number;
+  currency: string;
+  features: string[];
+  downloadLimit: number;
+  atsReports: boolean;
+  premiumTemplates: boolean;
+  priority: boolean;
+}
+
+export interface UserSubscription {
+  id: string;
+  userId: string;
+  planId: string;
+  status: 'active' | 'cancelled' | 'expired';
+  downloadsUsed: number;
+  expiresAt: string;
+  createdAt: string;
 }
 
 export interface SectionOrder {

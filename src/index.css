@@ -45,3 +45,156 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ABSOLUTE A4 page enforcement - NEVER allow height changes */
+.resume-page-container {
+  width: 816px !important;
+  height: 1056px !important;
+  max-width: 816px !important;
+  max-height: 1056px !important;
+  min-width: 816px !important;
+  min-height: 1056px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  display: block !important;
+  position: relative !important;
+}
+
+/* Force all parent containers to not expand */
+.resume-page-container,
+.resume-page-container * {
+  contain: layout style size !important;
+}
+
+/* ABSOLUTE A4 PAGE ENFORCEMENT - NO EXCEPTIONS */
+#resume-preview div[style*="816px"] {
+  width: 816px !important;
+  height: 1056px !important;
+  max-width: 816px !important;
+  max-height: 1056px !important;
+  min-width: 816px !important;
+  min-height: 1056px !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  flex: none !important;
+  flex-grow: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+/* Prevent any parent from allowing expansion */
+#resume-preview {
+  contain: layout !important;
+}
+
+#resume-preview > * {
+  contain: layout !important;
+}
+
+/* Force all resume pages to be exactly A4 */
+.resume-page,
+.resume-page-container,
+div[style*="1056px"] {
+  width: 816px !important;
+  height: 1056px !important;
+  max-width: 816px !important;
+  max-height: 1056px !important;
+  min-width: 816px !important;
+  min-height: 1056px !important;
+  overflow: hidden !important;
+}
+
+/* Legacy resume page classes */
+.resume-page,
+.resume-page-strict {
+  width: 816px !important;
+  height: 1056px !important;
+  max-width: 816px !important;
+  max-height: 1056px !important;
+  min-width: 816px !important;
+  min-height: 1056px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+/* Ensure all child elements respect boundaries */
+.resume-page *,
+.resume-page-strict *,
+.resume-page-container * {
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+}
+
+/* Content areas must never exceed their containers */
+.resume-page > div,
+.resume-page-strict > div,
+.resume-page-container > div {
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* Absolutely prevent any height expansion */
+.resume-page-container,
+.resume-page-container > *,
+.resume-page-container > * > * {
+  overflow: hidden !important;
+}
+
+/* Critical: Prevent any container from expanding */
+.resume-page-container {
+  flex: none !important;
+  display: block !important;
+}
+
+/* Ensure parent containers don't expand */
+.resume-page-container * {
+  flex-shrink: 1 !important;
+  max-height: 100% !important;
+}
+
+/* Print styles - absolute enforcement */
+@media print {
+  .resume-page-container {
+    width: 8.5in !important;
+    height: 11in !important;
+    max-width: 8.5in !important;
+    max-height: 11in !important;
+    min-width: 8.5in !important;
+    min-height: 11in !important;
+    page-break-after: always !important;
+    overflow: hidden !important;
+  }
+}
+
+/* Print styles for strict page dimensions */
+@media print {
+  .resume-page,
+  .resume-page-strict {
+    width: 8.5in !important;
+    height: 11in !important;
+    max-height: 11in !important;
+    min-height: 11in !important;
+    max-width: 8.5in !important;
+    min-width: 8.5in !important;
+    overflow: hidden !important;
+    page-break-after: always !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0.5in !important;
+  }
+  
+  /* Ensure no content overflows page boundaries during print */
+  .resume-page *,
+  .resume-page-strict * {
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+  
+  /* Hide any overflow content during print */
+  .resume-page > div,
+  .resume-page-strict > div {
+    overflow: hidden !important;
+    max-height: 100% !important;
+  }
+}
