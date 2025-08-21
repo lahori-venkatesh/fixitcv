@@ -384,9 +384,11 @@ const DedicatedPremiumTemplates: React.FC<DedicatedPremiumTemplatesProps> = ({
    // Helper: render sort tabs (fixed to wrap and scroll responsively)
    const renderSortTabs = () => (
      <div>
-       <div role="tablist" aria-label="Sort templates" className="flex flex-wrap gap-2 overflow-x-auto max-w-full">
+       <div role="tablist" aria-label="Sort templates" className="grid grid-cols-2 gap-2 w-full auto-rows-fr">
          {sortOptions.map((option) => {
+           /* eslint-disable @typescript-eslint/no-explicit-any */
            const Icon = option.icon as React.ComponentType<any>;
+           /* eslint-enable @typescript-eslint/no-explicit-any */
            const isSelected = sortBy === option.id;
            return (
              <button
@@ -395,7 +397,7 @@ const DedicatedPremiumTemplates: React.FC<DedicatedPremiumTemplatesProps> = ({
                aria-selected={isSelected}
                onClick={() => setSortBy(option.id)}
                title={option.desc}
-               className={`flex items-center space-x-2 px-3 sm:px-4 py-2 rounded-lg transition-all duration-200 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 ${
+               className={`w-full flex items-center justify-start space-x-3 px-3 sm:px-4 py-2 rounded-lg h-12 transition-all duration-200 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 ${
                  isSelected
                    ? 'bg-white dark:bg-slate-800 text-purple-700 dark:text-purple-300 shadow'
                    : isDarkMode
@@ -514,7 +516,7 @@ const DedicatedPremiumTemplates: React.FC<DedicatedPremiumTemplatesProps> = ({
 
        {/* Enhanced Filters */}
        <div className={`${showMobileFilters ? 'block lg:block' : 'hidden lg:block'}`}>
-         <div className={`rounded-3xl border-2 p-4 sm:p-6 backdrop-blur-sm ${isDarkMode ? 'bg-slate-900/80 border-slate-700/50' : 'bg-white/80 border-gray-200/50'}`}>
+         <div className={`rounded-3xl border-2 p-4 sm:p-6 backdrop-blur-sm ${isDarkMode ? 'bg-slate-900/80 border-slate-700/50' : 'bg-white/80 border-gray-200/50'} shadow-2xl shadow-purple-600/25 dark:shadow-black/40` }>
            <div className="flex flex-col lg:flex-row lg:items-center gap-6">
              <div className="flex-1">
                <h4 className={`text-lg font-bold mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Institution</h4>
