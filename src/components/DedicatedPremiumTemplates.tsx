@@ -3,13 +3,9 @@ import {
   Crown, 
   Star, 
   Building, 
-  Lock, 
-  Eye, 
-  Edit, 
   Download, 
   Target, 
   TrendingUp, 
-  Users,
   Filter,
   ChevronDown,
   ArrowRight,
@@ -19,30 +15,274 @@ import {
   ArrowLeft,
   Sparkles,
   Shield,
-  BookOpen,
   Briefcase,
   Beaker,
-  Wallet,
   Clock,
   Search,
   X
 } from 'lucide-react';
+import { useReducedMotion } from 'framer-motion';
 
 interface DedicatedPremiumTemplatesProps {
   isDarkMode?: boolean;
   onUpgrade: () => void;
   onBackToBuilder?: () => void;
-  onTemplateSelect?: (template: any) => void;
+  onTemplateSelect?: (template: Template) => void;
 }
 
 interface InstitutionFilter {
   id: string;
   name: string;
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   color: string;
   description: string;
 }
 
+// Add a lightweight Template type so we avoid `any` and satisfy linting rules
+interface Template {
+  id: string;
+  name: string;
+  preview: string;
+  atsScore: number;
+  rating: number;
+  downloadCount: number;
+  institution?: string;
+  institutionName?: string;
+  price?: number;
+  originalPrice?: number;
+  creatorProfile?: {
+    name: string;
+    verified?: boolean;
+    company?: string;
+    position?: string;
+    batch?: string;
+    branch?: string;
+  };
+  createdAt?: string;
+  isNew?: boolean;
+  isTrending?: boolean;
+  description?: string;
+  category?: string;
+  // Additional optional fields used in dataset
+  type?: string;
+  country?: string;
+  features?: string[];
+  colors?: Record<string, string>;
+  layout?: string;
+  style?: string;
+  tier?: string;
+  isVerified?: boolean;
+}
+
+// Premium templates data
+const premiumTemplates: Template[] = [
+  {
+    id: 'iit-bombay-elite',
+    name: 'IIT Bombay - Engineering Excellence',
+    preview: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop',
+    type: 'tech',
+    country: 'IN',
+    description: 'Elite engineering resume template from IIT Bombay with research focus and technical leadership',
+    features: ['ATS Score: 98%', 'Research Focus', 'Technical Leadership', 'IIT Verified', 'Publication Ready'],
+    colors: { primary: '#1e40af', secondary: '#3b82f6', accent: '#60a5fa' },
+    layout: 'single-column',
+    style: 'academic',
+    tier: 'elite',
+    atsScore: 98,
+    category: 'Engineering',
+    institution: 'IIT',
+    institutionName: 'IIT Bombay',
+    creatorProfile: {
+      name: 'Dr. Rajesh Kumar',
+      batch: '2018-2022',
+      branch: 'Computer Science Engineering',
+      company: 'Google',
+      position: 'Senior Software Engineer',
+      verified: true
+    },
+    downloadCount: 3247,
+    rating: 4.95,
+    price: 299,
+    originalPrice: 399,
+    isVerified: true,
+    createdAt: '2024-01-15',
+    isNew: false,
+    isTrending: true
+  },
+  {
+    id: 'iit-delhi-premium',
+    name: 'IIT Delhi - Tech Leadership',
+    preview: 'https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=400&h=500&fit=crop',
+    type: 'tech',
+    country: 'IN',
+    description: 'Premium tech leadership template from IIT Delhi with startup and innovation focus',
+    features: ['ATS Score: 97%', 'Tech Leadership', 'Startup Focus', 'Innovation Ready', 'IIT Verified'],
+    colors: { primary: '#dc2626', secondary: '#ef4444', accent: '#f87171' },
+    layout: 'single-column',
+    style: 'modern',
+    tier: 'elite',
+    atsScore: 97,
+    category: 'Technology',
+    institution: 'IIT',
+    institutionName: 'IIT Delhi',
+    creatorProfile: {
+      name: 'Prof. Priya Sharma',
+      batch: '2019-2023',
+      branch: 'Information Technology',
+      company: 'Microsoft',
+      position: 'Product Manager',
+      verified: true
+    },
+    downloadCount: 2890,
+    rating: 4.92,
+    price: 299,
+    originalPrice: 399,
+    isVerified: true,
+    createdAt: '2024-01-18',
+    isNew: true,
+    isTrending: false
+  },
+  {
+    id: 'nit-trichy-elite',
+    name: 'NIT Trichy - Engineering Professional',
+    preview: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=500&fit=crop',
+    type: 'tech',
+    country: 'IN',
+    description: 'Elite engineering resume template from NIT Trichy with industry focus',
+    features: ['ATS Score: 97%', 'Industry Focus', 'Technical Excellence', 'NIT Verified', 'Professional Layout'],
+    colors: { primary: '#7c3aed', secondary: '#8b5cf6', accent: '#a78bfa' },
+    layout: 'single-column',
+    style: 'professional',
+    tier: 'elite',
+    atsScore: 97,
+    category: 'Engineering',
+    institution: 'NIT',
+    institutionName: 'NIT Trichy',
+    creatorProfile: {
+      name: 'Prof. Anjali Sharma',
+      batch: '2019-2023',
+      branch: 'Computer Science Engineering',
+      company: 'Microsoft',
+      position: 'Senior Software Engineer',
+      verified: true
+    },
+    downloadCount: 2847,
+    rating: 4.9,
+    price: 199,
+    originalPrice: 299,
+    isVerified: true,
+    createdAt: '2024-01-20',
+    isNew: false,
+    isTrending: true
+  },
+  {
+    id: 'iisc-bangalore-research',
+    name: 'IISc Bangalore - Research Excellence',
+    preview: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop',
+    type: 'research',
+    country: 'IN',
+    description: 'Elite research-focused template from IISc Bangalore with academic and publication focus',
+    features: ['ATS Score: 99%', 'Research Excellence', 'Publication Ready', 'IISc Verified', 'Academic Focus'],
+    colors: { primary: '#1f2937', secondary: '#374151', accent: '#6b7280' },
+    layout: 'single-column',
+    style: 'academic',
+    tier: 'elite',
+    atsScore: 99,
+    category: 'Research',
+    institution: 'IISc',
+    institutionName: 'IISc Bangalore',
+    creatorProfile: {
+      name: 'Dr. Arjun Reddy',
+      batch: '2017-2021',
+      branch: 'Physics',
+      company: 'CERN',
+      position: 'Research Scientist',
+      verified: true
+    },
+    downloadCount: 1890,
+    rating: 4.96,
+    price: 399,
+    originalPrice: 499,
+    isVerified: true,
+    createdAt: '2024-01-10',
+    isNew: false,
+    isTrending: false
+  },
+  {
+    id: 'iim-ahmedabad-leadership',
+    name: 'IIM Ahmedabad - Business Leadership',
+    preview: 'https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=400&h=500&fit=crop',
+    type: 'business',
+    country: 'IN',
+    description: 'Elite business leadership template from IIM Ahmedabad with consulting and strategy focus',
+    features: ['ATS Score: 98%', 'Business Leadership', 'Consulting Focus', 'IIM Verified', 'Strategy Ready'],
+    colors: { primary: '#7c2d12', secondary: '#92400e', accent: '#b45309' },
+    layout: 'single-column',
+    style: 'executive',
+    tier: 'elite',
+    atsScore: 98,
+    category: 'Business',
+    institution: 'IIM',
+    institutionName: 'IIM Ahmedabad',
+    creatorProfile: {
+      name: 'Prof. Meera Kapoor',
+      batch: '2018-2022',
+      branch: 'MBA',
+      company: 'McKinsey',
+      position: 'Associate Partner',
+      verified: true
+    },
+    downloadCount: 2456,
+    rating: 4.94,
+    price: 399,
+    originalPrice: 499,
+    isVerified: true,
+    createdAt: '2024-01-12',
+    isNew: false,
+    isTrending: true
+  }
+];
+
+// Institution filters with better icons and colors
+const institutionFilters: InstitutionFilter[] = [
+  {
+    id: 'all',
+    name: 'All Institutions',
+    icon: Crown,
+    color: 'from-violet-500 via-purple-500 to-indigo-600',
+    description: 'All premium templates'
+  },
+  {
+    id: 'IIT',
+    name: 'IIT',
+    icon: Building,
+    color: 'from-red-500 via-orange-500 to-amber-500',
+    description: 'Elite engineering templates'
+  },
+  {
+    id: 'NIT',
+    name: 'NIT',
+    icon: Shield,
+    color: 'from-blue-500 via-indigo-500 to-purple-500',
+    description: 'Premium engineering templates'
+  },
+  {
+    id: 'IISc',
+    name: 'IISc',
+    icon: Beaker,
+    color: 'from-emerald-500 via-green-500 to-teal-500',
+    description: 'Research-focused templates'
+  },
+  {
+    id: 'IIM',
+    name: 'IIM',
+    icon: Briefcase,
+    color: 'from-purple-500 via-pink-500 to-rose-500',
+    description: 'Business & management templates'
+  }
+];
+
+// Component start: keep hooks and logic inside the component scope
 const DedicatedPremiumTemplates: React.FC<DedicatedPremiumTemplatesProps> = ({
   isDarkMode = false,
   onUpgrade,
@@ -53,243 +293,124 @@ const DedicatedPremiumTemplates: React.FC<DedicatedPremiumTemplatesProps> = ({
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [sortBy, setSortBy] = useState<'rating' | 'downloads' | 'newest' | 'ats'>('rating');
   const [searchQuery, setSearchQuery] = useState('');
-  const [hoveredTemplate, setHoveredTemplate] = useState<string | null>(null);
+  const [isMarqueePaused, setIsMarqueePaused] = useState(false);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
 
-  // Institution filters with better icons and colors
-  const institutionFilters: InstitutionFilter[] = [
-    {
-      id: 'all',
-      name: 'All Institutions',
-      icon: Crown,
-      color: 'from-violet-500 via-purple-500 to-indigo-600',
-      description: 'All premium templates'
-    },
-    {
-      id: 'IIT',
-      name: 'IIT',
-      icon: Building,
-      color: 'from-red-500 via-orange-500 to-amber-500',
-      description: 'Elite engineering templates'
-    },
-    {
-      id: 'NIT',
-      name: 'NIT',
-      icon: Shield,
-      color: 'from-blue-500 via-indigo-500 to-purple-500',
-      description: 'Premium engineering templates'
-    },
-    {
-      id: 'IISc',
-      name: 'IISc',
-      icon: Beaker,
-      color: 'from-emerald-500 via-green-500 to-teal-500',
-      description: 'Research-focused templates'
-    },
-    {
-      id: 'IIM',
-      name: 'IIM',
-      icon: Briefcase,
-      color: 'from-purple-500 via-pink-500 to-rose-500',
-      description: 'Business & management templates'
-    }
+   // Filter templates based on selected institution and search query
+   const filteredTemplates = premiumTemplates.filter(template => {
+     const matchesInstitution = selectedInstitution === 'all' || template.institution === selectedInstitution;
+     const q = searchQuery.toLowerCase();
+     const matchesSearch = template.name.toLowerCase().includes(q) ||
+                          (template.description ?? '').toLowerCase().includes(q) ||
+                          (template.category ?? '').toLowerCase().includes(q);
+     return matchesInstitution && matchesSearch;
+   });
+
+   // Sort templates
+   const sortedTemplates = [...filteredTemplates].sort((a, b) => {
+     switch (sortBy) {
+       case 'rating': return b.rating - a.rating;
+       case 'downloads': return b.downloadCount - a.downloadCount;
+       case 'newest': return (b.createdAt ? new Date(b.createdAt).getTime() : 0) - (a.createdAt ? new Date(a.createdAt).getTime() : 0);
+       case 'ats': return b.atsScore - a.atsScore;
+       default: return 0;
+     }
+   });
+
+   // Respect user's preference for reduced motion
+   const shouldReduceMotion = useReducedMotion();
+
+   // Basic mobile detection to disable marquee on small viewports
+   useEffect(() => {
+     const updateIsMobile = () => setIsMobile(window.innerWidth < 1024);
+     updateIsMobile();
+     window.addEventListener('resize', updateIsMobile);
+
+     return () => window.removeEventListener('resize', updateIsMobile);
+   }, []);
+
+  // New: exported sort options used by the redesigned segmented control
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const sortOptions: Array<{ id: 'rating' | 'downloads' | 'newest' | 'ats'; label: string; icon: React.ComponentType<any>; desc: string }> = [
+    { id: 'rating', label: 'Highest Rated', icon: Star, desc: 'Top rated by users' },
+    { id: 'downloads', label: 'Most Popular', icon: TrendingUp, desc: 'Most downloaded' },
+    { id: 'newest', label: 'Latest', icon: Zap, desc: 'Newest templates' },
+    { id: 'ats', label: 'Best ATS Score', icon: Target, desc: 'Optimized for ATS' }
   ];
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
-  // Premium templates data
-  const premiumTemplates = [
-    {
-      id: 'iit-bombay-elite',
-      name: 'IIT Bombay - Engineering Excellence',
-      preview: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop',
-      type: 'tech',
-      country: 'IN',
-      description: 'Elite engineering resume template from IIT Bombay with research focus and technical leadership',
-      features: ['ATS Score: 98%', 'Research Focus', 'Technical Leadership', 'IIT Verified', 'Publication Ready'],
-      colors: { primary: '#1e40af', secondary: '#3b82f6', accent: '#60a5fa' },
-      layout: 'single-column',
-      style: 'academic',
-      tier: 'elite',
-      atsScore: 98,
-      category: 'Engineering',
-      institution: 'IIT',
-      institutionName: 'IIT Bombay',
-      creatorProfile: {
-        name: 'Dr. Rajesh Kumar',
-        batch: '2018-2022',
-        branch: 'Computer Science Engineering',
-        company: 'Google',
-        position: 'Senior Software Engineer',
-        verified: true
-      },
-      downloadCount: 3247,
-      rating: 4.95,
-      price: 299,
-      originalPrice: 399,
-      isVerified: true,
-      createdAt: '2024-01-15',
-      isNew: false,
-      isTrending: true
-    },
-    {
-      id: 'iit-delhi-premium',
-      name: 'IIT Delhi - Tech Leadership',
-      preview: 'https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=400&h=500&fit=crop',
-      type: 'tech',
-      country: 'IN',
-      description: 'Premium tech leadership template from IIT Delhi with startup and innovation focus',
-      features: ['ATS Score: 97%', 'Tech Leadership', 'Startup Focus', 'Innovation Ready', 'IIT Verified'],
-      colors: { primary: '#dc2626', secondary: '#ef4444', accent: '#f87171' },
-      layout: 'single-column',
-      style: 'modern',
-      tier: 'elite',
-      atsScore: 97,
-      category: 'Technology',
-      institution: 'IIT',
-      institutionName: 'IIT Delhi',
-      creatorProfile: {
-        name: 'Prof. Priya Sharma',
-        batch: '2019-2023',
-        branch: 'Information Technology',
-        company: 'Microsoft',
-        position: 'Product Manager',
-        verified: true
-      },
-      downloadCount: 2890,
-      rating: 4.92,
-      price: 299,
-      originalPrice: 399,
-      isVerified: true,
-      createdAt: '2024-01-18',
-      isNew: true,
-      isTrending: false
-    },
-    {
-      id: 'nit-trichy-elite',
-      name: 'NIT Trichy - Engineering Professional',
-      preview: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=500&fit=crop',
-      type: 'tech',
-      country: 'IN',
-      description: 'Elite engineering resume template from NIT Trichy with industry focus',
-      features: ['ATS Score: 97%', 'Industry Focus', 'Technical Excellence', 'NIT Verified', 'Professional Layout'],
-      colors: { primary: '#7c3aed', secondary: '#8b5cf6', accent: '#a78bfa' },
-      layout: 'single-column',
-      style: 'professional',
-      tier: 'elite',
-      atsScore: 97,
-      category: 'Engineering',
-      institution: 'NIT',
-      institutionName: 'NIT Trichy',
-      creatorProfile: {
-        name: 'Prof. Anjali Sharma',
-        batch: '2019-2023',
-        branch: 'Computer Science Engineering',
-        company: 'Microsoft',
-        position: 'Senior Software Engineer',
-        verified: true
-      },
-      downloadCount: 2847,
-      rating: 4.9,
-      price: 199,
-      originalPrice: 299,
-      isVerified: true,
-      createdAt: '2024-01-20',
-      isNew: false,
-      isTrending: true
-    },
-    {
-      id: 'iisc-bangalore-research',
-      name: 'IISc Bangalore - Research Excellence',
-      preview: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop',
-      type: 'research',
-      country: 'IN',
-      description: 'Elite research-focused template from IISc Bangalore with academic and publication focus',
-      features: ['ATS Score: 99%', 'Research Excellence', 'Publication Ready', 'IISc Verified', 'Academic Focus'],
-      colors: { primary: '#1f2937', secondary: '#374151', accent: '#6b7280' },
-      layout: 'single-column',
-      style: 'academic',
-      tier: 'elite',
-      atsScore: 99,
-      category: 'Research',
-      institution: 'IISc',
-      institutionName: 'IISc Bangalore',
-      creatorProfile: {
-        name: 'Dr. Arjun Reddy',
-        batch: '2017-2021',
-        branch: 'Physics',
-        company: 'CERN',
-        position: 'Research Scientist',
-        verified: true
-      },
-      downloadCount: 1890,
-      rating: 4.96,
-      price: 399,
-      originalPrice: 499,
-      isVerified: true,
-      createdAt: '2024-01-10',
-      isNew: false,
-      isTrending: false
-    },
-    {
-      id: 'iim-ahmedabad-leadership',
-      name: 'IIM Ahmedabad - Business Leadership',
-      preview: 'https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=400&h=500&fit=crop',
-      type: 'business',
-      country: 'IN',
-      description: 'Elite business leadership template from IIM Ahmedabad with consulting and strategy focus',
-      features: ['ATS Score: 98%', 'Business Leadership', 'Consulting Focus', 'IIM Verified', 'Strategy Ready'],
-      colors: { primary: '#7c2d12', secondary: '#92400e', accent: '#b45309' },
-      layout: 'single-column',
-      style: 'executive',
-      tier: 'elite',
-      atsScore: 98,
-      category: 'Business',
-      institution: 'IIM',
-      institutionName: 'IIM Ahmedabad',
-      creatorProfile: {
-        name: 'Prof. Meera Kapoor',
-        batch: '2018-2022',
-        branch: 'MBA',
-        company: 'McKinsey',
-        position: 'Associate Partner',
-        verified: true
-      },
-      downloadCount: 2456,
-      rating: 4.94,
-      price: 399,
-      originalPrice: 499,
-      isVerified: true,
-      createdAt: '2024-01-12',
-      isNew: false,
-      isTrending: true
-    }
-  ];
-
-  // Filter templates based on selected institution and search query
-  const filteredTemplates = premiumTemplates.filter(template => {
-    const matchesInstitution = selectedInstitution === 'all' || template.institution === selectedInstitution;
-    const matchesSearch = template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         template.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         template.category.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesInstitution && matchesSearch;
-  });
-
-  // Sort templates
-  const sortedTemplates = [...filteredTemplates].sort((a, b) => {
-    switch (sortBy) {
-      case 'rating': return b.rating - a.rating;
-      case 'downloads': return b.downloadCount - a.downloadCount;
-      case 'newest': return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      case 'ats': return b.atsScore - a.atsScore;
-      default: return 0;
-    }
-  });
-
-  const handleTemplateAction = (action: 'preview' | 'edit' | 'download', template: any) => {
+  const handleTemplateAction = (action: 'preview' | 'edit' | 'download', template: Template) => {
     if (action === 'edit' && onTemplateSelect) {
       onTemplateSelect(template);
     } else {
       onUpgrade();
     }
   };
+
+  // Helper: render institution chips (keeps JSX smaller)
+  const renderInstitutionChips = () => (
+    <div>
+      <div className="flex items-center space-x-3 overflow-x-auto py-1">
+        {institutionFilters.map((filter) => {
+          const Icon = filter.icon;
+          const isSelected = selectedInstitution === filter.id;
+          return (
+            <button
+              key={filter.id}
+              onClick={() => setSelectedInstitution(filter.id)}
+              aria-pressed={isSelected}
+              title={filter.description}
+              className={`flex-shrink-0 inline-flex items-center space-x-2 px-3 sm:px-4 py-2 rounded-full border transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 ${
+                isSelected
+                  ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white border-transparent shadow-md'
+                  : isDarkMode
+                    ? 'bg-slate-800 text-slate-200 border-slate-600'
+                    : 'bg-white text-gray-700 border-gray-300'
+              }`}
+            >
+              <Icon className={`w-4 h-4 ${isSelected ? 'text-white' : 'text-gray-400'}`} />
+              <span className="text-sm font-medium">{filter.name}</span>
+            </button>
+          );
+        })}
+      </div>
+      <div className="mt-3 text-sm text-gray-500 dark:text-slate-400">Click a chip to filter templates. Selected: <span className="font-medium text-gray-700 dark:text-slate-200">{selectedInstitution === 'all' ? 'All' : selectedInstitution}</span></div>
+    </div>
+  );
+
+  // Helper: render sort tabs (fixed to wrap and scroll responsively)
+  const renderSortTabs = () => (
+    <div>
+      <div role="tablist" aria-label="Sort templates" className="grid grid-cols-2 gap-2 w-full auto-rows-fr">
+        {sortOptions.map((option) => {
+          /* eslint-disable @typescript-eslint/no-explicit-any */
+          const Icon = option.icon as React.ComponentType<any>;
+          /* eslint-enable @typescript-eslint/no-explicit-any */
+          const isSelected = sortBy === option.id;
+          return (
+            <button
+              key={option.id}
+              role="tab"
+              aria-selected={isSelected}
+              onClick={() => setSortBy(option.id)}
+              title={option.desc}
+              className={`w-full flex items-center justify-start space-x-3 px-3 sm:px-4 py-2 rounded-lg h-12 transition-all duration-200 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 ${
+                isSelected
+                  ? 'bg-white dark:bg-slate-800 text-purple-700 dark:text-purple-300 shadow'
+                  : isDarkMode
+                    ? 'text-slate-300 bg-slate-900/40'
+                    : 'text-gray-700 bg-white/60'
+              }`}
+            >
+              <Icon className={`w-4 h-4 ${isSelected ? 'text-purple-600' : 'text-gray-400'}`} />
+              <span className="truncate">{option.label}</span>
+            </button>
+          );
+        })}
+      </div>
+      <div className="mt-2 text-xs text-gray-500 dark:text-slate-400">Sort determines the order of templates shown.</div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen space-y-8 max-w-7xl mx-auto p-4 sm:p-6">
@@ -392,264 +513,156 @@ const DedicatedPremiumTemplates: React.FC<DedicatedPremiumTemplatesProps> = ({
 
       {/* Enhanced Filters */}
       <div className={`${showMobileFilters ? 'block lg:block' : 'hidden lg:block'}`}>
-        <div className={`rounded-3xl border-2 backdrop-blur-sm p-6 sm:p-8 ${
-          isDarkMode 
-            ? 'bg-slate-900/80 border-slate-700/50 shadow-2xl' 
-            : 'bg-white/80 border-gray-200/50 shadow-2xl'
-        }`}>
-          <div className="flex flex-col lg:flex-row lg:items-center gap-8">
-            {/* Institution Filters */}
+        <div className={`rounded-3xl border-2 p-4 sm:p-6 backdrop-blur-sm ${isDarkMode ? 'bg-slate-900/80 border-slate-700/50' : 'bg-white/80 border-gray-200/50'} shadow-2xl shadow-purple-600/25 dark:shadow-black/40` }>
+          <div className="flex flex-col lg:flex-row lg:items-center gap-6">
             <div className="flex-1">
-              <h4 className={`text-lg font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                Institution Type
-              </h4>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                {institutionFilters.map((filter) => {
-                  const Icon = filter.icon;
-                  const isSelected = selectedInstitution === filter.id;
-                  return (
-                    <button
-                      key={filter.id}
-                      onClick={() => setSelectedInstitution(filter.id)}
-                      className={`group relative overflow-hidden p-4 rounded-2xl border-2 transition-all duration-300 ${
-                        isSelected
-                          ? 'border-purple-500 bg-purple-50 dark:border-purple-400 dark:bg-purple-900/30 scale-105 shadow-xl'
-                          : isDarkMode
-                            ? 'border-slate-600 hover:border-slate-500 hover:bg-slate-800/50'
-                            : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50 hover:shadow-md'
-                      }`}
-                    >
-                      <div className={`absolute inset-0 bg-gradient-to-r ${filter.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
-                      <div className="relative">
-                        <Icon className={`w-6 h-6 mx-auto mb-2 ${isSelected ? 'text-purple-600 dark:text-purple-400' : 'text-gray-500 dark:text-slate-400'}`} />
-                        <div className={`text-sm font-medium text-center ${isSelected ? 'text-purple-700 dark:text-purple-300' : 'text-gray-700 dark:text-slate-300'}`}>
-                          {filter.name}
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+              <h4 className={`text-lg font-bold mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Institution</h4>
+              {renderInstitutionChips()}
             </div>
 
-            {/* Sort Options */}
             <div className="lg:w-80">
-              <h4 className={`text-lg font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                Sort By
-              </h4>
-              <div className="grid grid-cols-2 gap-3">
-                {[
-                  { id: 'rating', label: 'Highest Rated', icon: Star, color: 'from-yellow-400 to-orange-500' },
-                  { id: 'downloads', label: 'Most Popular', icon: TrendingUp, color: 'from-green-400 to-emerald-500' },
-                  { id: 'newest', label: 'Latest', icon: Zap, color: 'from-purple-400 to-pink-500' },
-                  { id: 'ats', label: 'Best ATS Score', icon: Target, color: 'from-blue-400 to-indigo-500' }
-                ].map((option) => {
-                  const Icon = option.icon;
-                  const isSelected = sortBy === option.id;
-                  return (
-                    <button
-                      key={option.id}
-                      onClick={() => setSortBy(option.id as any)}
-                      className={`group relative overflow-hidden p-3 rounded-xl border-2 transition-all duration-300 text-sm ${
-                        isSelected
-                          ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900/30 scale-105'
-                          : isDarkMode
-                            ? 'border-slate-600 hover:border-slate-500 hover:bg-slate-800/50'
-                            : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
-                      }`}
-                    >
-                      <div className={`absolute inset-0 bg-gradient-to-r ${option.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
-                      <div className="relative flex items-center space-x-2">
-                        <Icon className={`w-4 h-4 ${isSelected ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-slate-400'}`} />
-                        <span className={`font-medium ${isSelected ? 'text-blue-700 dark:text-blue-300' : 'text-gray-700 dark:text-slate-300'}`}>
-                          {option.label}
-                        </span>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+              <h4 className={`text-lg font-bold mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Sort By</h4>
+              {renderSortTabs()}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Templates Grid with enhanced cards */}
+      {/* Flowing full-card marquee replaces the static grid */}
       <div className="space-y-8">
         {sortedTemplates.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
-            {sortedTemplates.map((template, index) => (
-              <div
-                key={template.id}
-                className={`group relative rounded-3xl border-2 overflow-hidden transition-all duration-500 cursor-pointer ${
-                  isDarkMode 
-                    ? 'bg-slate-900/80 border-slate-700/50 hover:border-slate-600 hover:shadow-2xl hover:shadow-purple-500/20' 
-                    : 'bg-white/80 border-gray-200/50 hover:border-gray-300 hover:shadow-2xl hover:shadow-purple-500/20'
-                } backdrop-blur-sm transform hover:-translate-y-2 hover:scale-105`}
-                style={{ animationDelay: `${index * 100}ms` }}
-                onMouseEnter={() => setHoveredTemplate(template.id)}
-                onMouseLeave={() => setHoveredTemplate(null)}
-              >
-                {/* Template Preview with enhanced overlay */}
-                <div className="relative aspect-[3/4] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-800 dark:to-slate-900">
-                  <img
-                    src={template.preview}
-                    alt={template.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  
-                  {/* Enhanced overlay with blur effect */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 backdrop-blur-[2px]" />
-                  
-                  {/* Badges with better positioning */}
-                  <div className="absolute top-4 left-4 flex flex-col gap-2">
-                    <div className="flex items-center space-x-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
-                      <Crown className="w-3 h-3" />
-                      <span>Premium</span>
+          // If reduced motion is preferred, fall back to the standard grid but allow horizontal scroll
+          shouldReduceMotion ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
+              {sortedTemplates.map((template) => (
+                <div key={template.id} className="cursor-pointer" onClick={() => handleTemplateAction('preview', template)}>
+                  {/* reuse existing card markup but keep it concise here by calling the same structure used above visually */}
+                  <div className="group relative rounded-3xl border-2 overflow-hidden transition-all duration-500">
+                    <div className="relative aspect-[3/4] overflow-hidden">
+                      <img src={template.preview} alt={template.name} className="w-full h-full object-cover" />
                     </div>
-                    {template.isNew && (
-                      <div className="flex items-center space-x-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
-                        <Sparkles className="w-3 h-3" />
-                        <span>New</span>
-                      </div>
-                    )}
-                    {template.isTrending && (
-                      <div className="flex items-center space-x-1 bg-gradient-to-r from-orange-500 to-red-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
-                        <TrendingUp className="w-3 h-3" />
-                        <span>Trending</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* ATS Score with better styling */}
-                  <div className="absolute top-4 right-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-1.5 rounded-full text-sm font-bold shadow-lg">
-                    {template.atsScore}% ATS
-                  </div>
-
-                  {/* Institution badge */}
-                  <div className="absolute bottom-20 left-4 right-4">
-                    <div className="bg-white/95 dark:bg-slate-900/95 px-3 py-2 rounded-xl backdrop-blur-sm shadow-lg">
-                      <div className="flex items-center space-x-2">
-                        <Building className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                        <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
-                          {template.institutionName}
-                        </span>
-                      </div>
+                    <div className="p-6 bg-white/90 dark:bg-slate-900/80">
+                      <h3 className="font-bold text-lg">{template.name}</h3>
+                      <p className="text-sm text-gray-600 mt-2">{template.description}</p>
                     </div>
-                  </div>
-
-                  {/* Enhanced action buttons */}
-                  <div className="absolute bottom-4 left-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
-                    <button
-                      onClick={() => handleTemplateAction('preview', template)}
-                      className="w-full bg-white/95 dark:bg-slate-900/95 text-gray-900 dark:text-white px-4 py-3 rounded-xl font-semibold hover:bg-white dark:hover:bg-slate-900 transition-all duration-300 flex items-center justify-center space-x-2 shadow-xl backdrop-blur-sm transform hover:scale-105"
-                    >
-                      <Eye className="w-4 h-4" />
-                      <span>Preview Template</span>
-                    </button>
-                    <button
-                      onClick={() => handleTemplateAction('edit', template)}
-                      className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-3 rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 transition-all duration-300 flex items-center justify-center space-x-2 shadow-xl transform hover:scale-105"
-                    >
-                      <Edit className="w-4 h-4" />
-                      <span>Use Template</span>
-                    </button>
                   </div>
                 </div>
+              ))}
+            </div>
+          ) : (
+            <div>
+              <div className={`overflow-hidden rounded-lg ${isDarkMode ? 'bg-slate-900/60' : 'bg-white/70'} p-4`}> 
+                <div className="flex items-center justify-between mb-3">
+                  <div className={`text-sm font-semibold ${isDarkMode ? 'text-slate-200' : 'text-gray-800'}`}>Flowing Templates</div>
+                  <div className="text-xs text-gray-500 dark:text-slate-400">Hover a card to pause • Click to preview</div>
+                </div>
 
-                {/* Enhanced template info */}
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="font-bold text-lg leading-tight line-clamp-2 flex-1">{template.name}</h3>
-                    <div className="flex items-center space-x-1 text-yellow-500 flex-shrink-0 ml-3">
-                      <Star className="w-4 h-4 fill-current" />
-                      <span className="text-sm font-bold">{template.rating}</span>
-                    </div>
-                  </div>
+                <div className="relative overflow-hidden">
+                  {!shouldReduceMotion && !isMobile ? (
+                    <>
+                      <style>{`
+                        @keyframes marquee-full { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
+                        .marquee-full { display:flex; gap:1.5rem; align-items:stretch; animation: marquee-full linear infinite; will-change: transform; }
+                        .marquee-full.paused { animation-play-state: paused !important; }
+                      `}</style>
 
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
-                    {template.description}
-                  </p>
+                      <div className={`marquee-full ${isMarqueePaused ? 'paused' : ''}`} style={{ animationDuration: '14s' }} aria-hidden={false}>
+                        {[...sortedTemplates, ...sortedTemplates].map((template, idx) => (
+                          <div
+                            key={`${template.id}-${idx}`}
+                            onMouseEnter={() => setIsMarqueePaused(true)}
+                            onMouseLeave={() => setIsMarqueePaused(false)}
+                            onClick={() => handleTemplateAction('preview', template)}
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { handleTemplateAction('preview', template); } }}
+                            className="w-80 flex-shrink-0 rounded-3xl overflow-hidden border-2 shadow-lg cursor-pointer bg-white"
+                          >
+                            {/* full card contents (preview, badges, info, stats, pricing, creator) */}
+                            <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
+                              <img src={template.preview} alt={template.name} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
+                              <div className="absolute top-3 left-3 flex flex-col gap-2">
+                                <div className="px-3 py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-purple-600 to-blue-600 text-white">Premium</div>
+                                {template.isTrending && <div className="px-2 py-1 rounded-full text-xs font-semibold bg-orange-500 text-white">Trending</div>}
+                                {template.isNew && <div className="px-2 py-1 rounded-full text-xs font-semibold bg-green-500 text-white">New</div>}
+                              </div>
+                              <div className="absolute top-3 right-3 px-3 py-1.5 rounded-full text-sm font-bold bg-green-500 text-white">{template.atsScore}% ATS</div>
+                              <div className="absolute bottom-16 left-4 right-4">
+                                <div className="bg-white/95 px-3 py-2 rounded-xl backdrop-blur-sm shadow-lg">
+                                  <div className="flex items-center space-x-2">
+                                    <Building className="w-4 h-4 text-gray-600" />
+                                    <span className="text-sm font-medium text-gray-800">{template.institutionName}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
 
-                  {/* Enhanced stats */}
-                  <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="flex items-center space-x-1">
-                        <Download className="w-3 h-3" />
-                        <span>{template.downloadCount > 1000 ? `${(template.downloadCount/1000).toFixed(1)}k` : template.downloadCount}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Target className="w-3 h-3" />
-                        <span>{template.atsScore}%</span>
-                      </div>
-                    </div>
-                  </div>
+                            <div className="p-4 bg-white">
+                              <div className="flex items-start justify-between mb-2">
+                                <h3 className="font-bold text-base leading-tight line-clamp-2 text-gray-900">{template.name}</h3>
+                                <div className="flex items-center space-x-1 text-yellow-500">
+                                  <Star className="w-4 h-4" />
+                                  <span className="text-sm font-bold text-gray-900">{template.rating}</span>
+                                </div>
+                              </div>
+                              <p className="text-sm text-gray-600 mb-3 line-clamp-2">{template.description}</p>
 
-                  {/* Enhanced pricing with discount */}
-                  <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center justify-between">
-                      <div className="flex flex-col">
-                        <div className="flex items-center space-x-2">
-                          <span className="text-xl font-bold text-green-600 dark:text-green-400">
-                            ₹{template.price}
-                          </span>
-                          {template.originalPrice && template.originalPrice > template.price && (
-                            <span className="text-sm text-gray-500 line-through">
-                              ₹{template.originalPrice}
-                            </span>
-                          )}
-                        </div>
-                        {template.originalPrice && template.originalPrice > template.price && (
-                          <span className="text-xs text-green-600 font-medium">
-                            Save ₹{template.originalPrice - template.price}
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center space-x-1 text-xs text-gray-500">
-                        <Clock className="w-3 h-3" />
-                        <span>Instant Access</span>
-                      </div>
-                    </div>
-                  </div>
+                              <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
+                                <div className="flex items-center space-x-4">
+                                  <div className="flex items-center space-x-1">
+                                    <Download className="w-3 h-3" />
+                                    <span className="text-gray-700">{template.downloadCount > 1000 ? `${(template.downloadCount/1000).toFixed(1)}k` : template.downloadCount}</span>
+                                  </div>
+                                  <div className="flex items-center space-x-1">
+                                    <Target className="w-3 h-3" />
+                                    <span className="text-gray-700">{template.atsScore}%</span>
+                                  </div>
+                                </div>
+                                <div className="text-xs text-gray-500 flex items-center space-x-2">
+                                  <Clock className="w-3 h-3" />
+                                  <span>Instant Access</span>
+                                </div>
+                              </div>
 
-                  {/* Creator badge */}
-                  {template.creatorProfile && (
-                    <div className="mt-3 p-2 rounded-lg bg-gray-50 dark:bg-slate-800">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
-                          <span className="text-xs font-bold text-white">
-                            {template.creatorProfile.name.charAt(0)}
-                          </span>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center space-x-1">
-                            <span className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate">
-                              {template.creatorProfile.name}
-                            </span>
-                            {template.creatorProfile.verified && (
-                              <CheckCircle className="w-3 h-3 text-blue-500 flex-shrink-0" />
-                            )}
+                              <div className="pt-2 border-t border-gray-200 flex items-center justify-between">
+                                <div>
+                                  <div className="text-lg font-bold text-green-600">₹{template.price ?? 0}</div>
+                                  {template.originalPrice && template.originalPrice > (template.price ?? 0) && (
+                                    <div className="text-sm text-gray-500 line-through">₹{template.originalPrice}</div>
+                                  )}
+                                </div>
+                                <div>
+                                  <button onClick={(e) => { e.stopPropagation(); handleTemplateAction('preview', template); }} className="px-3 py-2 bg-white/80 rounded-md text-sm">Preview</button>
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                          <div className="text-xs text-gray-500 truncate">
-                            {template.creatorProfile.company} • {template.creatorProfile.position}
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                      {sortedTemplates.map((template) => (
+                        // reduced-motion fallback: grid cards
+                        <div key={template.id} className="cursor-pointer" onClick={() => handleTemplateAction('preview', template)}>
+                          {/* reuse existing card markup but keep it concise here by calling the same structure used above visually */}
+                          <div className="group relative rounded-3xl border-2 overflow-hidden transition-all duration-500">
+                            <div className="relative aspect-[3/4] overflow-hidden">
+                              <img src={template.preview} alt={template.name} className="w-full h-full object-cover" />
+                            </div>
+                            <div className="p-6 bg-white/90">
+                              <h3 className="font-bold text-lg text-gray-900">{template.name}</h3>
+                              <p className="text-sm text-gray-600 mt-2">{template.description}</p>
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      ))}
                     </div>
                   )}
                 </div>
-
-                {/* Hover effect glow */}
-                <div className={`absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ${
-                  template.institution === 'IIT' ? 'shadow-xl shadow-red-500/20' :
-                  template.institution === 'NIT' ? 'shadow-xl shadow-blue-500/20' :
-                  template.institution === 'IISc' ? 'shadow-xl shadow-green-500/20' :
-                  template.institution === 'IIM' ? 'shadow-xl shadow-purple-500/20' :
-                  'shadow-xl shadow-purple-500/20'
-                }`} />
               </div>
-            ))}
-          </div>
+            </div>
+          )
         ) : (
           <div className="text-center py-16">
             <div className="w-24 h-24 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-slate-800 dark:to-slate-700 rounded-3xl flex items-center justify-center mx-auto mb-6">
